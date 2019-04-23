@@ -4,6 +4,23 @@
     <title>Google Sheets API Quickstart</title>
     <meta charset="utf-8" />
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <style>
+        .loader {
+            border: 16px solid #f3f3f3; /* Light grey */
+            border-top: 16px solid #3498db; /* Blue */
+            border-radius: 50%;
+            width: 120px;
+            height: 120px;
+            animation: spin 2s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+
+
   </head>
 
   <body>
@@ -12,30 +29,31 @@
 
     <label for="favRestaurant">Favorite restaurant in SF</label>
     <input type="text" name="restaurant" id="restaurant">
-    
     <br>
-
     <label for="cuisine">Ingredients:</label>
     <input type="text" name="ingredients" id="ingredients">
-
     <br>
-
     <p id="recipe" rows="20" cols="80"></p>
 
     <div id="buttonContainer">
         <a class="btn btn-primary add-animals-btn" id="search" role="button">Search</a>
     <pre id="content" style="white-space: pre-wrap;"></pre>
 
+    <div class="loader" style="display:none"></div>
+
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <script type="text/javascript">
 
     $("#search").on("click", function() {
+        
         yelpTags();
         console.log("clicked");
+        
     });
  
     function yelpTags() {
+        $(".loader").show();
         console.log("search query run");
 
         var search = $("#restaurant").val().trim();
@@ -49,13 +67,12 @@
             method: "GET",                
             dataType: 'json',
             headers: {'Authorization': 'Bearer Xtg-ETMFIqtxhmgIcRKBksYvG86inYhtAJxQjT87qzbrGSJ1Gte9bNX3tv0HDgB_nIpdi0DuPZH1zHad6lv2TrjPv2-UgNLCnUKFRB3AHjoiPTv2bdkAqPV-grO-XHYx',},
-
         })
         .then(function(response) {
+            
             console.log(response);
-            // console.log(response.businesses[0].categories.length);
+
             for(var i = 0; i < response.businesses[0].categories.length; i++) {
-                /* console.log(response); */
                 console.log(response.businesses[0].categories[i].alias);
                 cuisineString = cuisineString.concat(response.businesses[0].categories[i].alias).concat(" ");
                 console.log(cuisineString);
@@ -82,13 +99,9 @@
         })
         .then(function(response) {
             console.log(response);
-            // $("#recipe").text(JSON.stringify(response));
-
-            // for(var i = 0; i < response.hits.length; i++) {
+            
             for(var i = 0; i < 4; i++) {
                 var recipeDiv = $("<div>");
-                // var p = $("<p>").text("Recipe Name: " + response.hits[i].label);
-                // var p2 = $("<p>").text("ingredients: " + JSON.stringify(response));
                 var newLink = $('<a />', {
                     id : "recipeLink",
                     name : "link",
@@ -104,6 +117,7 @@
                 recipeDiv.append(foodImage);
                 $("#recipe").append(recipeDiv);
             }
+            $(".loader").hide();
         });
     };
 
